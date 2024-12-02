@@ -1,0 +1,204 @@
+[handleMsg]:  {
+  key: {
+    remoteJid: '5215523370978@s.whatsapp.net',
+    fromMe: false,
+    id: '3A43772A26E5F9B8E88E',
+    participant: undefined
+  },
+  messageTimestamp: 1724395176,
+  pushName: 'José Luis Aguilar',
+  broadcast: false,
+  message: Message {
+    conversation: 'Hola',
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: 'Hola',
+  from: '5215523370978'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_5bb73157-dc97-4d8c-80e2-ab2253fabf84',
+  keyword: 'key_7c61a8d9-5252-4d65-808a-e288ba818a5c',
+  answer: '¡Hola!, Bienvenido al Bot 🤖 Básico de Fácil.Botmx V(1.0)',
+  options: {
+    media: 'https://64.media.tumblr.com/faa6b96e997082b3ea73f9326ff3220a/9deaa5b4cabbfa28-db/s2048x3072/1d569f13ddf208b4dd046bc61c4550b35a4372a7.pnj',
+    buttons: [],
+    capture: false,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: true
+  },
+  refSerialize: '2073f94fabe9c92ffe8b82f8c0ec5b1e'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '5215523370978@s.whatsapp.net',
+    fromMe: false,
+    id: '3A2A2C61F6843FE0C0DE',
+    participant: undefined
+  },
+  messageTimestamp: 1724395179,
+  pushName: 'José Luis Aguilar',
+  broadcast: false,
+  message: Message {
+    conversation: 'M',
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: 'M',
+  from: '5215523370978'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_50419ffe-830f-4963-8290-eb3d2a058786',
+  keyword: 'key_242b1d14-1c9d-4c50-b85d-b0eb4c249665',
+  answer: 'Elige una de las siguientes opciones para mostrar su función:\n' +
+    '(En este ejemplo podríamos agregar funciones infinitas y personalizables.) 👍🏻\n' +
+    '\n' +
+    '1️⃣ Guía (Enviar un PDF o Imagen) 📄\n' +
+    '2️⃣ Reservación (Redireccionar a un Link) 🔗\n' +
+    '3️⃣ Consultas (Consulta A.I.) 🧠\n' +
+    '0️⃣ Salir 👋🏻',
+  options: {
+    media: null,
+    buttons: [],
+    capture: true,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: true
+  },
+  refSerialize: 'e5fd507e4fa740294ba0a0a5bdc02807'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '5215523370978@s.whatsapp.net',
+    fromMe: false,
+    id: '3AD8C2832D7A3D9A1026',
+    participant: undefined
+  },
+  messageTimestamp: 1724395181,
+  pushName: 'José Luis Aguilar',
+  broadcast: false,
+  message: Message {
+    conversation: '1',
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: '1',
+  from: '5215523370978'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '5215523370978@s.whatsapp.net',
+    fromMe: false,
+    id: '3A5A5C75881C93D4B25F',
+    participant: undefined
+  },
+  messageTimestamp: 1724395242,
+  pushName: 'José Luis Aguilar',
+  broadcast: false,
+  message: Message {
+    conversation: '1',
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: '1',
+  from: '5215523370978'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_5bb73157-dc97-4d8c-80e2-ab2253fabf84',
+  keyword: 'key_7c61a8d9-5252-4d65-808a-e288ba818a5c',
+  answer: '¡Hola!, Bienvenido al Bot 🤖 Básico de Fácil.Botmx V(1.0)',
+  options: {
+    media: 'https://64.media.tumblr.com/faa6b96e997082b3ea73f9326ff3220a/9deaa5b4cabbfa28-db/s2048x3072/1d569f13ddf208b4dd046bc61c4550b35a4372a7.pnj',
+    buttons: [],
+    capture: false,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: true
+  },
+  refSerialize: '2073f94fabe9c92ffe8b82f8c0ec5b1e'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '5215523370978@s.whatsapp.net',
+    fromMe: false,
+    id: '3A3D8F975BE262CF56FD',
+    participant: undefined
+  },
+  messageTimestamp: 1724395244,
+  pushName: 'José Luis Aguilar',
+  broadcast: false,
+  message: Message {
+    conversation: 'M',
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: 'M',
+  from: '5215523370978'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_50419ffe-830f-4963-8290-eb3d2a058786',
+  keyword: 'key_242b1d14-1c9d-4c50-b85d-b0eb4c249665',
+  answer: 'Elige una de las siguientes opciones para mostrar su función:\n' +
+    '(En este ejemplo podríamos agregar funciones infinitas y personalizables.) 👍🏻\n' +
+    '\n' +
+    '1️⃣ Guía (Enviar un PDF o Imagen) 📄\n' +
+    '2️⃣ Reservación (Redireccionar a un Link) 🔗\n' +
+    '3️⃣ Consultas (Consulta A.I.) 🧠\n' +
+    '0️⃣ Salir 👋🏻',
+  options: {
+    media: null,
+    buttons: [],
+    capture: true,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: true
+  },
+  refSerialize: 'e5fd507e4fa740294ba0a0a5bdc02807'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '5215523370978@s.whatsapp.net',
+    fromMe: false,
+    id: '3AECFB55BB72BB26C8CC',
+    participant: undefined
+  },
+  messageTimestamp: 1724395246,
+  pushName: 'José Luis Aguilar',
+  broadcast: false,
+  message: Message {
+    conversation: '1',
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: '1',
+  from: '5215523370978'
+}

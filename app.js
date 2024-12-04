@@ -47,8 +47,8 @@ async function crearFactura(cliente, productos) {
 // Flujo principal de bienvenida
 const flowPrincipal = addKeyword(EVENTS.WELCOME)
     .addAnswer('¡Bienvenido a FácilBotMx de Facturación! 🤖🧾')
-   // .addAnswer('⚠️Recuerda que este es un Bot de demostración las facturas no tienen validez.⚠️')
-    .addAnswer('🚨Esta es una Prueba REAL🚨')
+    .addAnswer('⚠️Recuerda que este es un Bot de demostración las facturas no tienen validez.⚠️')
+  //  .addAnswer('🚨Esta es una Prueba REAL🚨')
     .addAnswer(
         'Puedes pedirme lo siguiente: ☺️\n- Escribe "factura" para generar una factura.🧾\n- Escribe "ayuda" para conocer más opciones.ℹ️',
     );
@@ -84,9 +84,9 @@ const flowGenerarFactura = addKeyword(['factura', 'generar factura'])
             {
                 quantity: 1,
                 product: {
-                    description: 'Valor Razonable',
+                    description: 'Bot de Facturación',
                     product_key: '80101503', // Clave SAT genérica
-                    price: 40.0,
+                    price: 5000.0,
                     unit_key: 'E48', // Unidad de medida
                 },
             },

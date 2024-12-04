@@ -1,132 +1,120 @@
-const { createBot, createProvider, createFlow, addKeyword } = require('@bot-whatsapp/bot');
+require('dotenv').config();
+const { createBot, createProvider, createFlow, addKeyword, EVENTS } = require('@bot-whatsapp/bot');
+const QRPortalWeb = require('@bot-whatsapp/portal');
 const BaileysProvider = require('@bot-whatsapp/provider/baileys');
 const MockAdapter = require('@bot-whatsapp/database/mock');
-const puppeteer = require('puppeteer');
-require('dotenv').config();
+const Facturapi = require('facturapi').default;
 
-// Función para rastrear guía usando Puppeteer
-async function rastrearGuia(trackingNumber) {
-    const trackingPrefix = ''; // Prefijo vacío
+// Inicializar FacturAPI con la clave de API
+const facturapi = new Facturapi(process.env.FACTURAPI_KEY);
 
-    let browser;
+// Objeto para manejar el estado de los usuarios
+const estadoUsuarios = {};
+
+// Función para guardar el estado
+function guardarEstado(usuario, nuevoEstado) {
+    if (!estadoUsuarios[usuario]) {
+        estadoUsuarios[usuario] = {};
+    }
+    estadoUsuarios[usuario] = { ...estadoUsuarios[usuario], ...nuevoEstado };
+}
+
+// Función para cargar el estado
+function cargarEstado(usuario) {
+    return estadoUsuarios[usuario] || {};
+}
+
+// Función para crear una factura con FacturAPI
+async function crearFactura(cliente, productos) {
     try {
-        browser = await puppeteer.launch({ headless: true });
-        const page = await browser.newPage();
+        const factura = await facturapi.invoices.create({
+            customer: cliente,
+            items: productos,
+            payment_form: '03', // Forma de pago
+            use: 'CP01', // Uso de CFDI 
+        });
 
-        await page.goto('https://volarisy4.smartkargo.com/', { waitUntil: 'networkidle2' });
+        // Enviar la factura por correo electrónico
+        await facturapi.invoices.sendByEmail(factura.id);
 
-        // Ingresar el número de guía sin prefijo
-        await page.type('#ctl00_ContentPlaceHolder1_txtPrefix', trackingPrefix);
-        await page.type('#ctl00_ContentPlaceHolder1_txtTrack', trackingNumber);
-
-        // Capturar ventana emergente al hacer clic en rastrear
-        const [popup] = await Promise.all([
-            new Promise(resolve => browser.once('targetcreated', async target => {
-                const newPage = await target.page();
-                if (newPage) {
-                    await newPage.setDefaultTimeout(100000);
-                    resolve(newPage);
-                }
-            })),
-            page.click('#ctl00_ContentPlaceHolder1_btnTrack')
-        ]);
-
-        let data;
-        if (popup) {
-            await popup.waitForSelector('body', { timeout: 10000 });
-            data = await popup.evaluate(() => document.body.innerText);
-            console.log('Texto crudo recibido:', data); // Imprimir texto crudo en terminal
-            await popup.close();
-        } else {
-            data = 'No se detectó información de la guía.';
-        }
-
-        await browser.close();
-        return data;
+        return factura;
     } catch (error) {
-        console.error('Error al rastrear la guía:', error.message);
-        return 'Ocurrió un error al rastrear la guía. Por favor, intenta de nuevo más tarde.';
-    } finally {
-        if (browser) await browser.close();
+        console.error('Error al crear la factura:', error.response?.data || error.message);
+        throw error;
     }
 }
 
-// Función para procesar y formatear la información del rastreo
-function procesarResultado(rawData) {
-    // Última actividad
-    const ultimaActividad = rawData.match(/Last Activity\s*([\s\S]*?)\n\n/)?.[1]?.trim() || 'Sin información';
-
-    // Detalles de entrega: Buscar eventos relacionados con "Delivered"
-    const detallesEntregaMatch = rawData.match(/Delivered at\s*(\w+)\s*[\s\S]*?\n\s*(\d{2}\/\d{2}\/\d{4}\s*\d{2}:\d{2})/) || [];
-    const lugarEntrega = detallesEntregaMatch[1]?.trim() || 'Sin información';
-    const fechaEntrega = detallesEntregaMatch[2]?.trim() || 'Sin información';
-
-    // Información de reservación y aceptación
-    const bookingInfoMatch = rawData.match(/Booking and Acceptance Information[\s\S]*?Booked\s*(.*)/);
-    const acceptedInfoMatch = rawData.match(/Accepted\s*(.*)/);
-    const booked = bookingInfoMatch?.[1]?.trim() || 'Sin información';
-    const accepted = acceptedInfoMatch?.[1]?.trim() || 'Sin información';
-
-    // Historial de estado
-    const statusHistoryMatch = rawData.match(/Status History([\s\S]*?)Delivery Orders/);
-    const statusHistory = statusHistoryMatch?.[1]?.trim().split('\n').filter(line => line.trim() !== '').map(line => `- ${line.trim()}`).join('\n') || 'Sin información';
-
-    // Recibido por
-    const recibidoPor = rawData.match(/Issued To\s*(?:\/\/)?\s*(.+)/)?.[1]?.trim() || 'Sin información';
-
-    // Formatear el mensaje con emojis
-    const mensajeFormateado = `
-📍 *Última Actividad:*
-
-${ultimaActividad}
-
-📦 *Detalles de Entrega:*
-
-- Lugar: ${lugarEntrega}
-- Fecha y hora: ${fechaEntrega}
-
-📑 *Información de Reservación y Aceptación:*
-
-- Booked: ${booked}
-- Accepted: ${accepted}
-
-🕒 *Historial de Estado:*
-
-${statusHistory}
-
-🤝 *Recibido por:*
-
-${recibidoPor}
-    `;
-
-    return mensajeFormateado;
-}
-
-// Flujo principal del bot
-const flowRastreo = addKeyword(['hola', 'rastreo', 'iniciar'])
+// Flujo principal de bienvenida
+const flowPrincipal = addKeyword(EVENTS.WELCOME)
+    .addAnswer('¡Bienvenido a FácilBotMx de Facturación! 🤖🧾')
+   // .addAnswer('⚠️Recuerda que este es un Bot de demostración las facturas no tienen validez.⚠️')
+    .addAnswer('🚨Esta es una Prueba REAL🚨')
     .addAnswer(
-        '¡Bienvenido al Bot de rastreo de guías! 🤖\n\nPor favor, envíame el número de guía que deseas rastrear.📦⬇️',
-        { capture: true },
-        async (ctx, ctxFn) => {
-            const trackingNumber = ctx.body.trim();
+        'Puedes pedirme lo siguiente: ☺️\n- Escribe "factura" para generar una factura.🧾\n- Escribe "ayuda" para conocer más opciones.ℹ️',
+    );
 
-            // Llamar a la función de Puppeteer para rastrear la guía
-            const rawData = await rastrearGuia(trackingNumber);
+// Flujo para generar una factura con preguntas separadas
+const flowGenerarFactura = addKeyword(['factura', 'generar factura'])
+    .addAnswer('Vamos a generar tu factura. ¿Cuál es tu nombre completo? 🤔', { capture: true }, async (ctx) => {
+        guardarEstado(ctx.from, { nombre: ctx.body });
+    })
+    .addAnswer('Gracias. Ahora, por favor, ingresa tu RFC. ☝🏻', { capture: true }, async (ctx) => {
+        const estado = cargarEstado(ctx.from);
+        guardarEstado(ctx.from, { ...estado, rfc: ctx.body });
+    })
+    .addAnswer('Perfecto. ¿Cuál es tu código postal? 📪', { capture: true }, async (ctx) => {
+        const estado = cargarEstado(ctx.from);
+        guardarEstado(ctx.from, { ...estado, codigoPostal: ctx.body });
+    })
+    .addAnswer('Por último, ¿a qué correo electrónico deseas que enviemos tu factura? ✉️', { capture: true }, async (ctx, ctxFn) => {
+        const estado = cargarEstado(ctx.from);
+        guardarEstado(ctx.from, { ...estado, email: ctx.body });
 
-            // Procesar y formatear el resultado
-            const mensajeFormateado = procesarResultado(rawData);
+        const datosCompletos = cargarEstado(ctx.from);
 
-            // Enviar respuesta al usuario
-            await ctxFn.flowDynamic(mensajeFormateado);
+        const cliente = {
+            legal_name: datosCompletos.nombre,
+            tax_id: datosCompletos.rfc,
+            tax_system: '601', // Régimen fiscal
+            email: datosCompletos.email,
+            address: { zip: datosCompletos.codigoPostal },
+        };
+
+        const productos = [
+            {
+                quantity: 1,
+                product: {
+                    description: 'Valor Razonable',
+                    product_key: '80101503', // Clave SAT genérica
+                    price: 40.0,
+                    unit_key: 'E48', // Unidad de medida
+                },
+            },
+        ];
+
+        try {
+            const factura = await crearFactura(cliente, productos);
+            await ctxFn.flowDynamic([
+                '¡Factura generada exitosamente! 🎉🎉🎉',
+                'La factura se ha enviado a tu correo electrónico, Revísalo ➡️✉️',
+            ]);
+        } catch (error) {
+            await ctxFn.flowDynamic('Lo siento, hubo un error al generar tu factura ❌. Inténtalo de nuevo 👍🏻');
+        } finally {
+            // Limpia el estado del usuario si es necesario
+            delete estadoUsuarios[ctx.from];
+
+            // Enviar mensaje adicional para volver al flujo principal
+            await ctxFn.flowDynamic(
+                'Puedes volver a realizar otra prueba 👈🏻🤖'
+            );
         }
-    )
-    .addAnswer('Escribe rastreo para volver a buscar otra guía 🤖👍🏻');
- 
+    });
 
 // Configuración del bot
 async function main() {
     const adapterDB = new MockAdapter();
-    const adapterFlow = createFlow([flowRastreo]);
+    const adapterFlow = createFlow([flowPrincipal, flowGenerarFactura]);
     const adapterProvider = createProvider(BaileysProvider);
 
     createBot({
@@ -134,6 +122,9 @@ async function main() {
         provider: adapterProvider,
         database: adapterDB,
     });
+
+    QRPortalWeb();
 }
 
 main();
+
